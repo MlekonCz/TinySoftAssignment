@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e097adade654adab9e33a62af9ba716, type: 3}
+  m_Name: MiniGamesSettings
+  m_EditorClassIdentifier: 
+  BetAmounts: 6400000000000000f401000000000000e803000000000000d007000000000000b80b00000000000088130000000000001027000000000000
+  MiniGameList:
+  - {fileID: 11400000, guid: e5b8e94117831374098878915215e342, type: 2}
+  - {fileID: 11400000, guid: 8aa36892357a7224b8fd6d96c105314d, type: 2}
