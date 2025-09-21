@@ -1,4 +1,6 @@
-﻿namespace Core.Utility
+﻿using System.Linq;
+
+namespace Core.Utility
 {
 	using System.Collections.Generic;
 	using UnityEngine;
@@ -15,8 +17,29 @@
 		
 		public static T SelectWeightedRandom<T>(this List<T> list, IRandom random = null) where T : IWeightRandomItem
 		{
-			// TODO: Implement Weighted random selection instead of Pure Random selection.
-			return SelectRandom(list, random);
+			if (list == null || list.Count == 0)
+				return default(T);
+    
+			if (list.Count == 1)
+				return list[0];
+    
+			var validItems = list.Where(x => x != null && x.Weight > 0).ToList();
+    
+			if (validItems.Count == 0)
+				return SelectRandom(list, random);
+    
+			var totalWeight = validItems.Sum(x => x.Weight);
+			var randomValue = (random?.Value ?? Random.value) * totalWeight;
+    
+			var currentWeight = 0f;
+			foreach (var item in validItems)
+			{
+				currentWeight += item.Weight;
+				if (randomValue <= currentWeight)
+					return item;
+			}
+    
+			return validItems.Last();
 		}
 	}
 }
