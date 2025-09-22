@@ -55,7 +55,7 @@
 				var winResult = game.GenerateWinResult();
 				game.ProcessWinResult(bet, winResult);
 			}
-			Debug.Log($"Played {gameCounter:N} games, balance progress {startBalance:N} => {userData.Balance:N}. RTP: ???");
+			Debug.Log($"Played {gameCounter:N} games, balance progress {startBalance:N} => {userData.Balance:N}. RTP: {((float)userData.Balance / startBalance * 100):N}%");
 		}
 #endif
 #endregion
