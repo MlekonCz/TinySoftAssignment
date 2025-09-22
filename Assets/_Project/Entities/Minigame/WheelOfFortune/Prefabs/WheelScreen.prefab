@@ -5214,15 +5214,15 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 1
-      inSlope: -0.5817309
-      outSlope: -0.5817309
+      inSlope: -0.47002584
+      outSlope: -0.47002584
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.38468271
-      value: 0.7762182
+      time: 0.4383176
+      value: 0.7939794
       inSlope: 1.1581569
       outSlope: 1.1581569
       tangentMode: 0
@@ -5230,7 +5230,7 @@ MonoBehaviour:
       inWeight: 0.33333334
       outWeight: 1
     - serializedVersion: 3
-      time: 0.4928118
+      time: 0.5285708
       value: -63.024467
       inSlope: -1.6576425
       outSlope: -1.6576425
@@ -5269,13 +5269,14 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   m_NumberOfRotations: 030000000400000005000000
-  m_MaxFallDownAngleDeltaPerSecond: 120
+  m_MaxFallDownAngleDeltaPerSecond: 220
   m_ConfettiParticles: {fileID: 2259996739773589370}
   m_SegmentPrefab: {fileID: 5136417045590870028, guid: bbf664c9ddf646449b37b1136602b190, type: 3}
   m_SegmentsParent: {fileID: 8052810838602064327}
   m_RotationTransform: {fileID: 1647923843625624111}
   _stickPrefab: {fileID: 3473534890843570471, guid: 0ad022675fec4ea4bae5c0a39b1b40a1, type: 3}
   _sticksParent: {fileID: 1348483127224458005}
+  _PctForBumpSound: 0.55
 --- !u!114 &2981025706315831265
 MonoBehaviour:
   m_ObjectHideFlags: 0

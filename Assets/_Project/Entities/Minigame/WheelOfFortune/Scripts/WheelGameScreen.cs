@@ -1,16 +1,15 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
 using TMPro;
+using System;
+using Core;
+using GUI.Widgets;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace WheelOfFortune
 {
-	using System;
-	using System.Threading.Tasks;
-	using Core;
-	using GUI.Widgets;
-	using UnityEngine;
-	using Random = UnityEngine.Random;
-
+	
 	public class WheelGameScreen : MiniGameScreenView<WheelGameSettings, WheelGame, long, WheelWidget.WheelSegmentConfig>
 	{
 		[SerializeField] private TextMeshProUGUI m_GameName;

@@ -74,13 +74,16 @@ namespace GUI.Widgets
         [SerializeField]
         private Transform _sticksParent;
         
+        [Range(0f,1f)]
+        [SerializeField]
+        private float _PctForBumpSound = 0.55f;
+
         private float m_ArcAngle;
         private float m_OneSegmentHalfAngle;
         private float m_AngleOffset;
         private float m_TotalAngleOffset;
 
         private const float RANDOM_OFFSET_FACTOR = 0.35f;
-        private const float PCT_FOR_BUMP_SOUND = 0.85f;
         
         public List<WheelSegmentWidget> WheelSegments { get; } = new();
 
@@ -147,51 +150,47 @@ namespace GUI.Widgets
 		[Button]
 		public async UniTask AnimateRotationToSegment(int index, CancellationToken cancellationToken)
 		{
-			m_OneSegmentHalfAngle = m_ArcAngle / 2f;
+			if (index < 0 || index >= WheelSegments.Count)
+				return;
+
+			var oneSegmentHalfAngle = m_ArcAngle / 2f;
 
 			var fullRotations = m_NumberOfRotations[Random.Range(0, m_NumberOfRotations.Length)] * 360;
 
 			var startAngle = GetCurrentWheelRotationAngle();
 
-			var clampedAngle = Mathf.FloorToInt(m_OneSegmentHalfAngle * RANDOM_OFFSET_FACTOR);
-			var randomOffset = Random.Range(-clampedAngle, clampedAngle);
+			var clampedAngle = Mathf.FloorToInt(oneSegmentHalfAngle * RANDOM_OFFSET_FACTOR);
+			var randomOffset = Random.Range(-clampedAngle, clampedAngle + 1);
 
 			var angleToTarget = GetSegmentAngle(index) - startAngle;
-
 			if (angleToTarget < 0) angleToTarget += 360;
 
 			var rotationCurve = m_RotationsCurves[Random.Range(0, m_RotationsCurves.Count)];
 			var lastFrameZ = m_WheelHead != null ? m_WheelHead.rotation.eulerAngles.z : 0f;
+			var lastSfxPlayedOnSegmentIndex = -1;
 
-			var lastSFXPlayedOnSegmentIndex = -1;
-			var currentSegmentIndex = 0;
+			var totalDelta = fullRotations + angleToTarget + randomOffset;
 
 			var timer = 0f;
 			while (timer < m_WheelSpinningDuration && !cancellationToken.IsCancellationRequested)
 			{
 				timer += Time.deltaTime;
 
-				var curveProgress = timer / m_WheelSpinningDuration;
-				var curveValue = rotationCurve.Evaluate(curveProgress);
+				var t = timer / m_WheelSpinningDuration;
+				var curveValue = rotationCurve.Evaluate(t);
 
-				var newZ = startAngle +
-				           fullRotations * curveValue +
-				           angleToTarget * curveValue +
-				           randomOffset * curveValue;
-
+				var newZ = startAngle + totalDelta * curveValue;
 				ApplyWheelRotation(newZ);
 
-				if (m_WheelHead != null)
-				{
-					UpdateWheelHeadAnimation(newZ, ref lastFrameZ, ref lastSFXPlayedOnSegmentIndex);
-				}
+				if (m_WheelHead != null) UpdateWheelHeadAnimation(newZ, ref lastFrameZ, ref lastSfxPlayedOnSegmentIndex);
 
-				await UniTask.Yield();
+				await UniTask.Yield(cancellationToken);
 			}
 
 			SetWheelRotationAngle(GetSegmentAngle(index) + randomOffset);
 
-			if (m_WheelHead != null) m_WheelHead.rotation = Quaternion.Euler(0, 0, 0);
+			if (m_WheelHead != null)
+				m_WheelHead.rotation = Quaternion.Euler(0f, 0f, 0f);
 
 			if (m_ConfettiParticles != null)
 			{
@@ -200,16 +199,13 @@ namespace GUI.Widgets
 				m_ConfettiParticles.Play();
 			}
 
-			if (index >= 0 && index < WheelSegments.Count)
-				WheelSegments[index].PlayWinGlowAnim();
+			WheelSegments[index].PlayWinGlowAnim();
 
 			//todo play sound via sound manager that player won/lost
 		}
 		
-		private void UpdateWheelHeadAnimation(float newZ, ref float lastFrameZ, ref int lastSFXIndex)
+		private void UpdateWheelHeadAnimation(float newZ, ref float lastFrameZ, ref int lastSfxIndex)
 		{
-			if (m_WheelHead == null) return;
-    
 			var absoluteZ = Mathf.Abs(newZ);
 			var currentSegmentIndex = Mathf.CeilToInt(absoluteZ / m_ArcAngle);
 			var positionInSegment = (absoluteZ % m_ArcAngle) / m_ArcAngle;
@@ -221,10 +217,10 @@ namespace GUI.Widgets
 			m_WheelHead.rotation = Quaternion.Euler(0, 0, smoothedAngle);
 			lastFrameZ = smoothedAngle;
 
-			if (currentSegmentIndex != lastSFXIndex && positionInSegment > PCT_FOR_BUMP_SOUND)
+			if (currentSegmentIndex != lastSfxIndex && positionInSegment > _PctForBumpSound)
 			{
 				// TODO: Play bump sound via sound manager
-				lastSFXIndex = currentSegmentIndex;
+				lastSfxIndex = currentSegmentIndex;
 			}
 		}
 		
