@@ -33,50 +33,61 @@ namespace GUI.Widgets
             public List<WheelSegmentConfig> Segments;
         }
 
+        [BoxGroup("Spinning")]
         [SerializeField]
         private float m_WheelSpinningDuration = 5f;
 
+        [BoxGroup("Spinning")]
         [SerializeField]
         private Transform[] m_WheelSpinners;
-
-        [SerializeField]
-        private Transform m_WheelHead;
-
+        
+        [BoxGroup("Spinning")]
         [SerializeField]
         private List<AnimationCurve> m_RotationsCurves = new();
 
-        [SerializeField]
-        private AnimationCurve m_BumpCurve;
-
+        [BoxGroup("Spinning")]
         [SerializeField]
         private int[] m_NumberOfRotations = { 3, 4, 5 };
 
-        [SerializeField]
-        private float m_MaxFallDownAngleDeltaPerSecond = 90;
-
-        [SerializeField]
-        private ParticleSystem m_ConfettiParticles;
-
-
-        [SerializeField]
-        private WheelSegmentWidget m_SegmentPrefab;
-
-        [SerializeField]
-        private Transform m_SegmentsParent;
-
+        [BoxGroup("Spinning")]
         [SerializeField]
         private Transform m_RotationTransform;
 
-        
+        [BoxGroup("Head")]
         [SerializeField]
-        private GameObject _stickPrefab;
+        private Transform m_WheelHead;
 
+        [BoxGroup("Head")]
         [SerializeField]
-        private Transform _sticksParent;
+        private AnimationCurve m_BumpCurve;
         
+        [BoxGroup("Head")]
+        [SerializeField]
+        private float m_MaxFallDownAngleDeltaPerSecond = 90;
+  
+        [BoxGroup("Head")]
         [Range(0f,1f)]
         [SerializeField]
         private float _PctForBumpSound = 0.55f;
+
+        [BoxGroup("Segments")]
+        [SerializeField]
+        private WheelSegmentWidget m_SegmentPrefab;
+
+        [BoxGroup("Segments")]
+        [SerializeField]
+        private Transform m_SegmentsParent;
+       
+        [BoxGroup("Segments")]
+        [SerializeField]
+        private GameObject _stickPrefab;
+
+        [BoxGroup("Segments")]
+        [SerializeField]
+        private Transform _sticksParent;
+      
+        [SerializeField]
+        private List<ParticleSystem> m_ConfettiParticles = new();
 
         private float m_ArcAngle;
         private float m_OneSegmentHalfAngle;
@@ -192,11 +203,11 @@ namespace GUI.Widgets
 			if (m_WheelHead != null)
 				m_WheelHead.rotation = Quaternion.Euler(0f, 0f, 0f);
 
-			if (m_ConfettiParticles != null)
+			foreach (var particle in m_ConfettiParticles)
 			{
-				m_ConfettiParticles.gameObject.SetActive(true);
-				m_ConfettiParticles.Stop();
-				m_ConfettiParticles.Play();
+				particle.gameObject.SetActive(true);
+				particle.Stop();
+				particle.Play();
 			}
 
 			WheelSegments[index].PlayWinGlowAnim();

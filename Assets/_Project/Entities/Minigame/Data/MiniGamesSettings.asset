@@ -16,3 +16,4 @@ MonoBehaviour:
   MiniGameList:
   - {fileID: 11400000, guid: e5b8e94117831374098878915215e342, type: 2}
   - {fileID: 11400000, guid: 8aa36892357a7224b8fd6d96c105314d, type: 2}
+  - {fileID: 11400000, guid: d266f15333658f84a85b0957eec1c6d3, type: 2}

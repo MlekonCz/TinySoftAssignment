@@ -21,17 +21,17 @@ MonoBehaviour:
       Color: {r: 1, g: 0, b: 0, a: 1}
       Sprite: {fileID: 0}
       Text: LOSE
-      RandomWeight: 5
+      RandomWeight: 2
     - WinPercent: 50
       Color: {r: 1, g: 0, b: 0.80399513, a: 1}
       Sprite: {fileID: 0}
       Text: HALF
-      RandomWeight: 4
+      RandomWeight: 2
     - WinPercent: 100
       Color: {r: 0, g: 0.6114483, b: 1, a: 1}
       Sprite: {fileID: 0}
       Text: NO HARM
-      RandomWeight: 3
+      RandomWeight: 2
     - WinPercent: 200
       Color: {r: 0.22364914, g: 1, b: 0, a: 1}
       Sprite: {fileID: 0}
@@ -41,14 +41,4 @@ MonoBehaviour:
       Color: {r: 0.9733331, g: 1, b: 0, a: 1}
       Sprite: {fileID: 0}
       Text: FIVE TIMES
-      RandomWeight: 1
-    - WinPercent: 0
-      Color: {r: 0, g: 0, b: 0, a: 0}
-      Sprite: {fileID: 0}
-      Text: 
-      RandomWeight: 1
-    - WinPercent: 0
-      Color: {r: 0, g: 0, b: 0, a: 0}
-      Sprite: {fileID: 0}
-      Text: 
-      RandomWeight: 1
+      RandomWeight: 2

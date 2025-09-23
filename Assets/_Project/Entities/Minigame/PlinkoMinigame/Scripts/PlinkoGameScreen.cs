@@ -71,7 +71,7 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
         // Sets wheel texts to display real win amounts.
         private void SetupWheelWins()
         {
-            foreach (var segment in m_PlinkoWidget.m_BoxWidgets)
+            foreach (var segment in m_PlinkoWidget.BoxWidgets)
             {
                 segment.SetText($"{m_BetAndPlayWidget.BetValue * segment.Config.WinPercent / 100:N0}");
             }

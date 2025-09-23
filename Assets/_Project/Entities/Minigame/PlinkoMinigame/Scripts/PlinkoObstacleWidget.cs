@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 
 namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
 {
@@ -10,6 +11,8 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
         private Transform m_LeftPoint;
         [SerializeField]
         private Transform m_RightPoint;
+        [SerializeField]
+        public TMP_Text Text;
 
         
         public Transform TopPoint => m_TopPoint;
