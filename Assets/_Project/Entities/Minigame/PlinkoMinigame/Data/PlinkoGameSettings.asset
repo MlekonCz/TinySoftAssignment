@@ -17,28 +17,28 @@ MonoBehaviour:
   GameScreenPrefab: {fileID: -2155750212347342490, guid: 01045a1dd7c20494fa1f85451f55dd70, type: 3}
   PlinkoConfig:
     Box:
-    - WinPercent: 0
+    - WinPercent: 200
       Color: {r: 1, g: 0, b: 0, a: 1}
       Sprite: {fileID: 0}
-      Text: LOSE
+      Text: TWICE
       RandomWeight: 2
     - WinPercent: 50
       Color: {r: 1, g: 0, b: 0.80399513, a: 1}
       Sprite: {fileID: 0}
       Text: HALF
-      RandomWeight: 2
-    - WinPercent: 100
+      RandomWeight: 4
+    - WinPercent: 0
       Color: {r: 0, g: 0.6114483, b: 1, a: 1}
       Sprite: {fileID: 0}
-      Text: NO HARM
-      RandomWeight: 2
-    - WinPercent: 200
+      Text: LOSE
+      RandomWeight: 5
+    - WinPercent: 100
       Color: {r: 0.22364914, g: 1, b: 0, a: 1}
       Sprite: {fileID: 0}
-      Text: TWICE
-      RandomWeight: 2
+      Text: NO HARM
+      RandomWeight: 3
     - WinPercent: 500
       Color: {r: 0.9733331, g: 1, b: 0, a: 1}
       Sprite: {fileID: 0}
       Text: FIVE TIMES
-      RandomWeight: 2
+      RandomWeight: 1

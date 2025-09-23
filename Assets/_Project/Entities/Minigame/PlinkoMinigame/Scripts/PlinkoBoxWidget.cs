@@ -5,7 +5,10 @@ using UnityEngine.UI;
 namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
 {
     public class PlinkoBoxWidget : MonoBehaviour
-    {
+    { 
+        [SerializeField]
+        private ParticleSystem[] m_ConfettiParticles;
+
         [SerializeField] private Image m_SegmentBackground;
         [SerializeField] private TextMeshProUGUI m_Text;
         [SerializeField] private Image m_Image;
@@ -45,9 +48,15 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
             }
         }
 
-        public void PlayWinGlowAnim()
+        public void PlayWinAnim()
         {
-			
+            foreach (var particle in m_ConfettiParticles)
+            {
+                particle.gameObject.SetActive(true);
+                particle.Stop();
+                particle.Play();
+            }
+
         }
     }
 }

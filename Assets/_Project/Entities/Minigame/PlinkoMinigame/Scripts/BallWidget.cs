@@ -7,10 +7,9 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
         [SerializeField] 
         private Transform m_Visual;
         
-        public void ApplyVisualBaseline(Vector3 baselineLocalPos, float yOffset)
+        public void ApplyVisualBaseline(Vector3 baselineLocalPos, float xOffset, float yOffset)
         {
-            if (m_Visual != null) m_Visual.localPosition = baselineLocalPos + Vector3.up * yOffset;
-            else transform.localPosition = baselineLocalPos + Vector3.up * yOffset; // fallback
+            m_Visual.localPosition = baselineLocalPos + new Vector3(xOffset, yOffset, 0);
         }
     }
 }

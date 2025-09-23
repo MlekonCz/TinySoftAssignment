@@ -28,6 +28,12 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
 
         [SerializeField]
         private AnimationCurve m_DropToSideYCurve;
+        
+        
+        public AnimationCurve DropOnTopXCurve => m_DropOnTopXCurve;
+        public AnimationCurve DropOnTopYCurve => m_DropOnTopYCurve;
+        public AnimationCurve DropToSideXCurve => m_DropToSideXCurve;
+        public AnimationCurve DropToSideYCurve => m_DropToSideYCurve;
 
     }
     public class PlinkoWidget : ScreenWidget
@@ -67,24 +73,17 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
         private float m_RoundDuration = 5f;
 
         [BoxGroup("Ball")]
+        [Range(0f, 2f)]
         [SerializeField]
-        private AnimGroupEntry m_RightSideDropCurveGroupCurve = new();
+        private float m_DurationRationSideDropToTopDrop = 1f;
 
         [BoxGroup("Ball")]
         [SerializeField]
-        private AnimGroupEntry m_LeftSideDropCurveGroupCurve = new();
-        
-        [BoxGroup("Ball")]
-        [SerializeField]
-        private List<AnimGroupEntry> m_DropCurves = new();
+        private List<AnimGroupEntry> m_RightSideDropCurveGroupCurve = new();
 
         [BoxGroup("Ball")]
         [SerializeField]
-        private List<AnimationCurve> m_BounceLeftCurves = new();
-
-        [BoxGroup("Ball")]
-        [SerializeField]
-        private List<AnimationCurve> m_BounceRightCurves = new();
+        private List<AnimGroupEntry> m_LeftSideDropCurveGroupCurve = new();
 
         [FormerlySerializedAs("_AboveObstacleSpawn")]
         [BoxGroup("Ball")]
@@ -104,11 +103,7 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
         [BoxGroup("Box")]
         [SerializeField]
         private float m_BoxOffset = 20f;
-
-        [BoxGroup("Box")]
-        [SerializeField]
-        private ParticleSystem[] m_ConfettiParticles;
-
+        
         [BoxGroup("Obstacle")]
         [SerializeField]
         private PlinkoObstacleWidget m_ObstaclePrefab;
@@ -366,43 +361,44 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
 
             for (var row = 0; row < rows; row++)
             {
-                var dropCurve = Pick(m_DropCurves);
-                var leftCurve = Pick(m_BounceLeftCurves, dropCurve);
-                var rightCurve = Pick(m_BounceRightCurves, dropCurve);
+                var goRight = choices[row];
 
+                var animCurveGroups = goRight ? m_RightSideDropCurveGroupCurve : m_LeftSideDropCurveGroupCurve;
+                var curveGroup = animCurveGroups[Random.Range(0, animCurveGroups.Count)];
+                
                 ct.ThrowIfCancellationRequested();
 
                 var obstacle = m_ObstacleGrid[row, path[row]];
                 if (obstacle == null) break;
 
-                await AnimateDrop(ct, ballT, obstacle.TopPoint.position, segmentDuration, dropCurve, ball, Ease.Linear);
+                await AnimateDrop(ct, ballT, obstacle.TopPoint.position, segmentDuration  * (2 - m_DurationRationSideDropToTopDrop), curveGroup.DropOnTopXCurve,curveGroup.DropOnTopYCurve, ball, Ease.Linear);
 
-                var goRight = choices[row];
 
                 var sidePoint = goRight ? obstacle.RightPoint.position : obstacle.LeftPoint.position;
-                var sideCurve = goRight ? rightCurve : leftCurve;
 
                 
                 
-                await AnimateDrop(ct, ballT, sidePoint, segmentDuration, sideCurve, ball, Ease.Linear);
+                await AnimateDrop(ct, ballT, sidePoint, segmentDuration * m_DurationRationSideDropToTopDrop, curveGroup.DropToSideXCurve, curveGroup.DropToSideYCurve, ball, Ease.Linear);
             }
 
-            var targetBoxPos = BoxWidgets[targetBoxIndex].transform.position;
-            var curve = Pick(m_DropCurves);
-            
-            await AnimateDrop(ct, ballT, targetBoxPos, segmentDuration, curve, ball, Ease.Linear);
+            var winningBox = BoxWidgets[targetBoxIndex];
+            var targetBoxPos = winningBox.transform.position;
+            await AnimateDrop(ct, ballT, targetBoxPos, segmentDuration * (2 - m_DurationRationSideDropToTopDrop), null,null, ball, Ease.Linear);
 
+            winningBox.PlayWinAnim();
+            Destroy(ball);
         }
 
-        private static async UniTask AnimateDrop(CancellationToken ct, Transform ballT, Vector3 position, float segmentDuration, AnimationCurve dropCurve, BallWidget ball, Ease ease)
+        private static async UniTask AnimateDrop(CancellationToken ct, Transform ballT, Vector3 position, float segmentDuration, AnimationCurve xAnimCurve, AnimationCurve yAnimCurve, BallWidget ball, Ease ease)
         {
             var tween = ballT.DOMove(position, segmentDuration).SetEase(ease);
 
             tween.OnUpdate(() =>
             {
                 var p = tween.ElapsedPercentage();
-                var yOffset = dropCurve != null ? dropCurve.Evaluate(p) : 0f;
-                ball.ApplyVisualBaseline(ballT.position, yOffset);
+                var xOffset = xAnimCurve != null ? xAnimCurve.Evaluate(p) : 0f;
+                var yOffset = yAnimCurve != null ? yAnimCurve.Evaluate(p) : 0f;
+                ball.ApplyVisualBaseline(ballT.position, xOffset, yOffset);
             });
 
             await tween.AsyncWaitForCompletion()
