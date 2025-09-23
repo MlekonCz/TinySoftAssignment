@@ -169,6 +169,101 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
 		
 		private void SetUpObstacles(PlinkoConfig config)
 		{
+			if (m_ObstacleGrid != null)
+			{
+				foreach (var seg in m_ObstacleGrid)
+				{
+					if (seg) Destroy(seg.gameObject);
+				}
+			}
+
+			var gridSize = config.Box.Count - 1;
+			m_ObstacleGrid = new PlinkoObstacleWidget[gridSize, gridSize];
+
+			m_indexOrder = new List<int>(gridSize);
+			var start = (gridSize - 1) / 2;
+			m_indexOrder.Add(start);
+			var firstDir = gridSize % 2 == 0 ? +1 : -1;
+			for (var offset = 1; m_indexOrder.Count < gridSize; offset++)
+			{
+				var f = start + firstDir * offset;
+				if (f >= 0 && f < gridSize) m_indexOrder.Add(f);
+				if (m_indexOrder.Count >= gridSize) break;
+
+				var b = start - firstDir * offset;
+				if (b >= 0 && b < gridSize) m_indexOrder.Add(b);
+			}
+
+			var parentHeight = m_ObstacleParent.rect.height;
+
+			var basePegSize = ((RectTransform)m_ObstaclePrefab.transform).rect.height; 
+			var targetPegSize = basePegSize;
+			var verticalRowSpacing = _ObstacleHeightOffset;
+
+			var expectedHeight = gridSize * verticalRowSpacing + targetPegSize;
+			if (expectedHeight > parentHeight)
+			{
+				var s = parentHeight / expectedHeight; 
+				targetPegSize = Mathf.Max(basePegSize * s, _MinObstacleSize);
+				verticalRowSpacing = Mathf.Max(_ObstacleHeightOffset * s, _MinimalObstacleHeightOffset);
+
+				var maxRowDyGivenPeg = (parentHeight - targetPegSize) / gridSize;
+				if (maxRowDyGivenPeg < verticalRowSpacing)
+					verticalRowSpacing = Mathf.Max(maxRowDyGivenPeg, _MinimalObstacleHeightOffset);
+
+				var maxPegGivenRowDy = parentHeight - gridSize * verticalRowSpacing;
+				if (maxPegGivenRowDy < targetPegSize)
+					targetPegSize = Mathf.Max(maxPegGivenRowDy, _MinObstacleSize);
+			}
+
+			var parentBottomLocalY = m_ObstacleParent != null
+				? m_ObstacleParent.rect.yMin
+				: -verticalRowSpacing * 0.5f;
+
+			var gapStartX = m_boxLayoutStartX + m_boxLayoutStepX * 0.5f;
+			var gapStepX = m_boxLayoutStepX;
+			var totalGaps = config.Box.Count - 1;
+
+			var minGapX = gapStartX;
+			var maxGapX = gapStartX + (totalGaps - 1) * gapStepX;
+
+			for (var row = 0; row < gridSize; row++)
+			{
+				var countInRow = row + 1;
+
+				var rowFromBottom = gridSize - 1 - row;
+				var yLocal = parentBottomLocalY + verticalRowSpacing + rowFromBottom * verticalRowSpacing;
+
+				var leftGapIndex = (totalGaps - countInRow) / 2;
+				leftGapIndex = Mathf.Clamp(leftGapIndex, 0, Mathf.Max(0, totalGaps - countInRow));
+				var baseX = gapStartX + leftGapIndex * gapStepX;
+
+				var shiftThisRow = totalGaps % 2 == 0 ? row % 2 == 0 : row % 2 != 0;
+				var desiredShift = shiftThisRow ? gapStepX * 0.5f : 0f;
+
+				var firstXWithShift = baseX + desiredShift;
+				var lastXWithShift = baseX + desiredShift + (countInRow - 1) * gapStepX;
+				if (firstXWithShift < minGapX) desiredShift += minGapX - firstXWithShift;
+				if (lastXWithShift > maxGapX) desiredShift -= lastXWithShift - maxGapX;
+
+				for (var j = 0; j < countInRow; j++)
+				{
+					var obstacle = Instantiate(m_ObstaclePrefab, m_ObstacleParent);
+					obstacle.gameObject.SetActive(true);
+
+					m_ObstacleGrid[row, m_indexOrder[j]] = obstacle;
+
+					var xLocal = baseX + desiredShift + j * gapStepX;
+
+					var t = obstacle.transform;
+					t.localPosition = new Vector3(xLocal, yLocal, 0f);
+					t.localRotation = Quaternion.identity;
+
+					var rt = (RectTransform)t;
+					rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, targetPegSize);
+					rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, targetPegSize);
+				}
+			}
 		}
 
 		[Button]
