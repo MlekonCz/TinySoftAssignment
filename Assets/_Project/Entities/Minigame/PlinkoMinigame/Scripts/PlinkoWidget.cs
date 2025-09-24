@@ -144,7 +144,6 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
 
         private void SetUpBoxes(PlinkoConfig config)
         {
-            // Clear old segment setup
             foreach (var segment in BoxWidgets) Destroy(segment.gameObject);
 
             BoxWidgets.Clear();
@@ -152,6 +151,7 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
             if (boxCount <= 0) return;
 
 
+            //adjusts the size of boxes based on size of screen
             var offsetsTotal = (boxCount + 1) * m_BoxOffset;
 
             var prefabBoxWidth = ((RectTransform)m_BoxPrefab.transform).rect.width;
@@ -184,7 +184,6 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
 
         private void SetUpObstacles(PlinkoConfig config)
         {
-            // Clear old
             if (m_ObstacleGrid != null)
             { 
                 foreach (var seg in m_ObstacleGrid)
@@ -192,95 +191,95 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
                     if (seg) Destroy(seg.gameObject);
                 }
             }
-
             var gridSize = config.Box.Count - 1;
+            if (gridSize <= 0) return;
+
             m_ObstacleGrid = new RectTransform[gridSize, gridSize];
 
             m_indexOrder = new List<int>(gridSize);
             for (var i = 0; i < gridSize; i++) m_indexOrder.Add(i);
 
+            //adjusts the size of obstacles based on size of screen
             var parentHeight = m_ObstacleParent.rect.height;
-            var basePegSize = ((RectTransform)m_ObstaclePrefab.transform).rect.height; // square
-            var targetPegSize = basePegSize;
+            var baseObstacleSize = ((RectTransform)m_ObstaclePrefab.transform).rect.height; // square
+            var targetObstacleSize = baseObstacleSize;
             var verticalRowSpacing = m_ObstacleHeightOffset;
 
-            var expectedHeight = gridSize * verticalRowSpacing + targetPegSize;
+            var expectedHeight = gridSize * verticalRowSpacing + targetObstacleSize;
             if (expectedHeight > parentHeight)
             {
-                var s = parentHeight / expectedHeight;
-                targetPegSize = Mathf.Max(basePegSize * s, m_MinObstacleSize);
-                verticalRowSpacing = Mathf.Max(m_ObstacleHeightOffset * s, m_MinimalObstacleHeightOffset);
+                var heightScale  = parentHeight / expectedHeight;
+                targetObstacleSize = Mathf.Max(baseObstacleSize * heightScale , m_MinObstacleSize);
+                verticalRowSpacing = Mathf.Max(m_ObstacleHeightOffset * heightScale , m_MinimalObstacleHeightOffset);
 
-                var maxRowDyGivenPeg = (parentHeight - targetPegSize) / gridSize;
-                if (maxRowDyGivenPeg < verticalRowSpacing)
-                    verticalRowSpacing = Mathf.Max(maxRowDyGivenPeg, m_MinimalObstacleHeightOffset);
+                var maxRowSpacing = (parentHeight - targetObstacleSize) / gridSize;
+                if (maxRowSpacing < verticalRowSpacing) verticalRowSpacing = Mathf.Max(maxRowSpacing, m_MinimalObstacleHeightOffset);
 
-                var maxPegGivenRowDy = parentHeight - gridSize * verticalRowSpacing;
-                if (maxPegGivenRowDy < targetPegSize)
-                    targetPegSize = Mathf.Max(maxPegGivenRowDy, m_MinObstacleSize);
+                var maxAvailableObstacleSize = parentHeight - gridSize * verticalRowSpacing;
+                if (maxAvailableObstacleSize < targetObstacleSize) targetObstacleSize = Mathf.Max(maxAvailableObstacleSize, m_MinObstacleSize);
             }
 
-            var parentBottomLocalY = m_ObstacleParent != null
-                ? m_ObstacleParent.rect.yMin
-                : -verticalRowSpacing * 0.5f;
-
             var gapStartX = m_boxLayoutStartX + m_boxLayoutStepX * 0.5f;
-            var gapStepX = m_boxLayoutStepX;
-            var totalGaps = config.Box.Count - 1;
+          
+            var maxGapX = gapStartX + (gridSize - 1) * m_boxLayoutStepX;
 
-            var minGapX = gapStartX;
-            var maxGapX = gapStartX + (totalGaps - 1) * gapStepX;
-
+            
             for (var row = 0; row < gridSize; row++)
             {
                 var countInRow = row + 1;
 
-                var rowFromBottom = gridSize - 1 - row;
-                var yLocal = parentBottomLocalY + verticalRowSpacing + rowFromBottom * verticalRowSpacing;
+                var rowIndexFromBottom = gridSize - 1 - row;
+                var yLocal = m_ObstacleParent.rect.yMin + verticalRowSpacing + rowIndexFromBottom * verticalRowSpacing;
 
-                var leftGapIndex = Mathf.Clamp((totalGaps - countInRow) / 2, 0, Mathf.Max(0, totalGaps - countInRow));
-                var baseX = gapStartX + leftGapIndex * gapStepX;
+                var leftGapIndex = Mathf.Clamp((gridSize - countInRow) / 2, 0, Mathf.Max(0, gridSize - countInRow));
+                var baseX = gapStartX + leftGapIndex * m_boxLayoutStepX;
 
-                var shiftThisRow = totalGaps % 2 == 0 ? row % 2 == 0 : row % 2 != 0;
-                var desiredShift = shiftThisRow ? gapStepX * 0.5f : 0f;
+                var isShiftedRow = gridSize % 2 == 0 ? row % 2 == 0 : row % 2 != 0;
+                var horizontalShift = isShiftedRow ? m_boxLayoutStepX * 0.5f : 0f;
 
-                var firstXWithShift = baseX + desiredShift;
-                var lastXWithShift = baseX + desiredShift + (countInRow - 1) * gapStepX;
-                if (firstXWithShift < minGapX) desiredShift += minGapX - firstXWithShift;
-                if (lastXWithShift > maxGapX) desiredShift -= lastXWithShift - maxGapX;
+                var firstXWithShift = baseX + horizontalShift;
+                var lastXWithShift = baseX + horizontalShift + (countInRow - 1) * m_boxLayoutStepX;
+                if (firstXWithShift < gapStartX) horizontalShift += gapStartX - firstXWithShift;
+                if (lastXWithShift > maxGapX) horizontalShift -= lastXWithShift - maxGapX;
 
                 for (var j = 0; j < countInRow; j++)
                 {
                     var obstacle = Instantiate(m_ObstaclePrefab, m_ObstacleParent);
                     obstacle.gameObject.SetActive(true);
 
-                    var col = j;
-                    m_ObstacleGrid[row, col] = obstacle;
+                    m_ObstacleGrid[row, j] = obstacle;
 
-                    var xLocal = baseX + desiredShift + j * gapStepX;
-                    xLocal = Mathf.Clamp(xLocal, minGapX, maxGapX);
+                    var xLocal = baseX + horizontalShift + j * m_boxLayoutStepX;
+                    xLocal = Mathf.Clamp(xLocal, gapStartX, maxGapX);
 
                     var t = obstacle.transform;
                     t.localPosition = new Vector3(xLocal, yLocal, 0f);
                     t.localRotation = Quaternion.identity;
 
                     var rt = (RectTransform)t;
-                    rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, targetPegSize);
-                    rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, targetPegSize);
+                    rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, targetObstacleSize);
+                    rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, targetObstacleSize);
                 }
             }
         }
 
         private void SetUpBallSpawningImage()
         {
-            var topObstacle =m_ObstacleGrid[0,FindValidObstacles(0).First()];
-            var ballSpawningPosition = topObstacle.position + Vector3.up * (m_AboveObstacleSpawn +  topObstacle.ToScreenSpaceRect().height / 2);
+            for (int i = 0; i < m_ObstacleGrid.GetLength(0); i++)
+            {
+                if (m_ObstacleGrid[0,i] != null)
+                {
+                    var obstacle = m_ObstacleGrid[0,i];
+                    var ballSpawningPosition = obstacle.position + Vector3.up * (m_AboveObstacleSpawn +  obstacle.ToScreenSpaceRect().height / 2);
+                    m_BallSpawningImage.transform.position = ballSpawningPosition;
+                    break;
+                }
+            }
             
-            m_BallSpawningImage.transform.position = ballSpawningPosition;
         }
 
         [Button]
-        public async UniTask AnimateRotationToSegment(int targetBoxIndex, CancellationToken ct)
+        public async UniTask AnimateRotationToSegment(int targetBoxIndex, CancellationToken cancellationToken)
         {
             if (m_BallPrefab == null || m_BallParent == null)
                 return;
@@ -293,55 +292,30 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
             if (BoxWidgets == null || targetBoxIndex < 0 || targetBoxIndex >= BoxWidgets.Count)
                 return;
 
-            AnimationCurve Pick(IReadOnlyList<AnimationCurve> list, AnimationCurve fallback = null)
-            {
-                if (list != null && list.Count > 0)
-                    return list[Random.Range(0, list.Count)];
-                return fallback ?? AnimationCurve.Linear(0, 0, 1, 1);
-            }
-
+            //selects path to the target box
             var pathLength = rows;
             var path = new List<int>(pathLength);
             var choices = new List<bool>(pathLength);
 
-            bool CanStillReachBox(int colIdxAtRow, int row)
-            {
-                var remRows = pathLength - (row + 1);
-                var j = ColToRowSlotJ(row, colIdxAtRow);
-                if (j < 0) return false; // safety
-
-                var minBox = j;
-                var maxBox = j + remRows + 1;
-
-                minBox = Mathf.Max(minBox, 0);
-                maxBox = Mathf.Min(maxBox, BoxWidgets.Count - 1);
-
-                return targetBoxIndex >= minBox && targetBoxIndex <= maxBox;
-            }
-
             if (pathLength > 0)
             {
                 var currentSegmentIndex = -1;
-                for (var i = 0; i < pathLength; i++)
+                var randomPath = FindPaths(targetBoxIndex).SelectRandom();
+
+                path = randomPath.Path;
+
+                for (var i = 0; i < path.Count; i++)
                 {
-                    var validObstacles = FindValidObstacles(i, currentSegmentIndex);
-
-                    var feasible = validObstacles.Where(idx => CanStillReachBox(idx, i)).ToList();
-
-                    var candidatePool = feasible.Count > 0 ? feasible : validObstacles;
-
-                    var nextObstacleIndex = candidatePool.SelectRandom();
-
-                    if (currentSegmentIndex >= 0) choices.Add(nextObstacleIndex > currentSegmentIndex);
-
-                    path.Add(nextObstacleIndex);
-                    currentSegmentIndex = nextObstacleIndex;
+                    var nextSegmentIndex = path[i];
+                    if (currentSegmentIndex >= 0) choices.Add(nextSegmentIndex > currentSegmentIndex);
+                    currentSegmentIndex = nextSegmentIndex;
                 }
-
                 choices.Add(targetBoxIndex >= currentSegmentIndex + 1);
             }
 
+            //spawns new ball
             var topObstacle = m_ObstacleGrid[0, path[0]];
+            if (topObstacle == null) return;
             var startAbove = topObstacle.position + Vector3.up * (m_AboveObstacleSpawn +  topObstacle.ToScreenSpaceRect().height / 2);
 
             var ball = Instantiate(m_BallPrefab, m_BallParent);
@@ -349,61 +323,70 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
 
             var ballT = ball.transform;
             ballT.position = startAbove;
-
-
-            var winningBox = BoxWidgets[targetBoxIndex];
-
-
-            for (var i = 0; i < rows + 1; i++)
+            
+            try
             {
-                var initialXPos = ball.transform.position.x;
-
-                var goRight = choices[Mathf.Min(choices.Count-1, i)];
-                var targetPos = GetTargetObject(i, goRight);
-                
-                var timeToPeak = Mathf.Abs(-ball.YVelocity / m_BallAcceleration);
-                var peakY = ball.transform.position.y + ball.YVelocity * timeToPeak + 0.5f * m_BallAcceleration * timeToPeak * timeToPeak;
-              
-                var timeToReachY = Mathf.Sqrt((2 * (peakY - targetPos.y)) / m_BallAcceleration);
-
-                var totalTimeToReachTarget = timeToPeak + timeToReachY;
-                
-                var elapsedTime = 0f;
-                while (true)
+                //physics logic for ball
+                var winningBox = BoxWidgets[targetBoxIndex];
+                for (var i = 0; i < rows + 1; i++)
                 {
-                    elapsedTime += Time.deltaTime;
-                    
-                    var pos = ball.transform.position;
-                    pos.y += ball.YVelocity * Time.deltaTime;
-                    
-                    ball.YVelocity -= m_BallAcceleration * Time.deltaTime;
+                    var initialXPos = ball.transform.position.x;
 
-                    var t = Mathf.Clamp01(elapsedTime / totalTimeToReachTarget);
-                    pos.x = Mathf.Lerp(initialXPos, targetPos.x, t);
+                    var goRight = choices[Mathf.Min(choices.Count-1, i)];
+                    var targetPos = GetTargetObject(i, goRight, out var angle);
+                
+                    var timeToPeak = Mathf.Abs(-ball.YVelocity / m_BallAcceleration);
+                    var peakY = ball.transform.position.y + ball.YVelocity * timeToPeak + 0.5f * m_BallAcceleration * timeToPeak * timeToPeak;
+              
+                    var timeToReachY = Mathf.Sqrt((2 * (peakY - targetPos.y)) / m_BallAcceleration);
 
-                    ball.transform.position = pos;
-
-                    if (ball.transform.position.y <= targetPos.y)
+                    var totalTimeToReachTarget = timeToPeak + timeToReachY;
+                
+                    var elapsedTime = 0f;
+                    while (!cancellationToken.IsCancellationRequested)
                     {
-                        ball.YVelocity *= -m_BallBouncePreservedMomentum;
-                        break;
-                    }
+                        elapsedTime += Time.deltaTime;
+                    
+                        var pos = ball.transform.position;
+                        pos.y += ball.YVelocity * Time.deltaTime;
+                    
+                        ball.YVelocity -= m_BallAcceleration * Time.deltaTime;
 
-                    await UniTask.Yield();
+                        var t = Mathf.Clamp01(elapsedTime / totalTimeToReachTarget);
+                        pos.x = Mathf.Lerp(initialXPos, targetPos.x, t);
+
+                        ball.transform.position = pos;
+
+                        if (ball.transform.position.y <= targetPos.y)
+                        {
+                            var ang = Mathf.Abs(angle);
+                            var angleFactor = Mathf.Cos(ang * Mathf.Deg2Rad);
+
+                            var preserved = m_BallBouncePreservedMomentum * angleFactor;
+
+                            ball.YVelocity *= -preserved;
+                            break;
+                        }
+
+                        await UniTask.Yield(cancellationToken);
+                    }
                 }
+                winningBox.PlayWinAnim();
             }
-            
-            winningBox.PlayWinAnim();
-            Destroy(ball);
+            finally
+            {
+                if (ball != null)
+                    Destroy(ball.gameObject);
+            }
+
             return;
-            
-            
-            Vector2 GetTargetObject(int index, bool goRight)
+
+            Vector2 GetTargetObject(int index, bool goRight, out float angle)
             {
                 if (index > path.Count - 1)
                 {
+                    angle = 0;
                     return BoxWidgets[targetBoxIndex].transform.position;
-
                 }
                 var obstacle = m_ObstacleGrid[index, path[index]];
 
@@ -412,56 +395,54 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
 
                 var vec = (obstacleR + balR) * Vector3.up;
                 var sign = (goRight ? -1 : 1);
-                var rotatedVec = Quaternion.Euler(0, 0, Random.Range(m_MinBounceAngle , m_MaxBounceAngle) * sign) * vec;
+                angle = Random.Range(m_MinBounceAngle , m_MaxBounceAngle);
+                var rotatedVec = Quaternion.Euler(0, 0, angle * sign) * vec;
                 return rotatedVec + obstacle.transform.position;
             }
         }
 
-        private List<int> FindValidObstacles(int row, int currentObstacleIndex = -1)
+        private List<BallPath> FindPaths(int targetBoxIndex)
         {
-            var result = new List<int>();
-            var rows = m_ObstacleGrid.GetLength(0);
-            var cols = m_ObstacleGrid.GetLength(1);
-            if ((uint)row >= (uint)rows) return result;
+            var paths = new List<BallPath>();
 
-            //when below 0, looks for first obstacle on top of pyramid
-            if (currentObstacleIndex < 0)
+            var rowCount = m_ObstacleGrid.GetLength(0);
+            if (rowCount <= 0) return paths;
+
+            var colCount = rowCount;
+            var boxCount = rowCount + 1;
+            if (targetBoxIndex < 0 || targetBoxIndex >= boxCount) return paths;
+
+            var startColA = Mathf.Clamp(targetBoxIndex - 1, 0, colCount - 1);
+            var startColB = Mathf.Clamp(targetBoxIndex,0, colCount - 1);
+
+            var currentPath = new int[rowCount];
+            var visited = new HashSet<int>(2);
+
+            void Explore(int row, int col)
             {
-                var col0 = m_indexOrder != null && m_indexOrder.Count > 0 ? m_indexOrder[0] : -1;
-                if (col0 >= 0 && col0 < cols && m_ObstacleGrid[row, col0] != null)
+                if (m_ObstacleGrid[row, col] == null) return;
+
+                currentPath[row] = col;
+
+                if (row == 0)
                 {
-                    result.Add(col0);
-                    return result;
+                    paths.Add(new BallPath { Path = new List<int>(currentPath) });
+                    return;
                 }
 
-                for (var c = 0; c < cols; c++)
-                    if (m_ObstacleGrid[row, c] != null)
-                    {
-                        result.Add(c);
-                        break;
-                    }
-
-                return result;
+                Explore(row - 1, col);
+                if (col - 1 >= 0) Explore(row - 1, col - 1);
             }
-            
 
-            if (currentObstacleIndex < cols && m_ObstacleGrid[row, currentObstacleIndex] != null)
-                result.Add(currentObstacleIndex);
+            if (visited.Add(startColA)) Explore(rowCount - 1, startColA);
+            if (visited.Add(startColB)) Explore(rowCount - 1, startColB);
 
-            var nextObstacleIndex = currentObstacleIndex + 1;
-            if (nextObstacleIndex >= 0 && nextObstacleIndex < cols && m_ObstacleGrid[row, nextObstacleIndex] != null)
-                result.Add(nextObstacleIndex);
-
-            if (result.Count > 1 && result[0] > result[1])
-                (result[0], result[1]) = (result[1], result[0]);
-
-            return result;
+            return paths;
         }
 
-        private int ColToRowSlotJ(int row, int colIndex)
+        private class BallPath
         {
-            var j = m_indexOrder.IndexOf(colIndex);
-            return j >= 0 && j <= row ? j : -1;
+            public List<int> Path = new();
         }
     }
 }

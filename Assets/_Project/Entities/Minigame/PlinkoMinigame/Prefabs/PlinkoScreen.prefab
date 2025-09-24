@@ -127,8 +127,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_BallSpawningImage: {fileID: 4744802507076660168}
   m_BallAcceleration: 9.81
-  m_MaxBounceAngle: 35
-  m_MinBounceAngle: 25
+  m_MaxBounceAngle: 45
+  m_MinBounceAngle: 0
   m_BallBouncePreservedMomentum: 0.5
   m_BallParent: {fileID: 6431238651495694275}
   m_BallPrefab: {fileID: 1736228056801991517, guid: ba38e802ed3b5864e8a45de35e1b0f4f, type: 3}

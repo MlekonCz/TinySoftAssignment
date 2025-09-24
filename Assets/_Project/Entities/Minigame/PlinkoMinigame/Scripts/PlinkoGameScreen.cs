@@ -57,8 +57,6 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
             var winIndex = m_Game.Settings.PlinkoConfig.Box.IndexOf(winItem);
 
             await m_PlinkoWidget.AnimateRotationToSegment(winIndex,cancellationToken);
-			
-            Debug.Log("Rotation finished");
         }
 
         protected override void HandleBetChanged()
