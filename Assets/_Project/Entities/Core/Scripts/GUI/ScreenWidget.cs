@@ -1,7 +1,7 @@
-﻿namespace Core
-{
-	using UnityEngine;
+﻿using UnityEngine;
 
+namespace Entities.Core.Scripts.GUI
+{
 	public class ScreenWidget : MonoBehaviour
 	{
 		protected ScreenStack	m_ScreenStack;

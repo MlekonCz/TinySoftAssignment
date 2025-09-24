@@ -1,7 +1,7 @@
-﻿namespace Core.Utility
-{
-	using System;
+﻿using System;
 
+namespace Entities.Core.Scripts.Utility
+{
 	// Helper class for easy seed-based randomization
 	public class SeedRandom : IRandom
 	{

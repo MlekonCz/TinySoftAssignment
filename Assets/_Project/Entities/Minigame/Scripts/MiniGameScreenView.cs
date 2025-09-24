@@ -1,10 +1,11 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
+using Entities.Core.Scripts;
+using Entities.Core.Scripts.GUI;
+using Entities.Core.Scripts.User;
 
-namespace Core
+namespace Entities.Minigame.Scripts
 {
-	using System.Threading.Tasks;
-
 	public abstract class MiniGameScreenView<TSettings, TGame, TBet, TWinResult> : ScreenView<TGame> 
 		where TSettings : MiniGameSettingsBase
 		where TGame : MiniGameBase<TSettings, TBet, TWinResult> 

@@ -1,9 +1,10 @@
-﻿namespace GUI.Widgets
-{
-	using Core;
-	using UnityEngine;
-	using UnityEngine.UI;
+﻿using Entities.Core.Scripts;
+using Entities.Core.Scripts.GUI;
+using UnityEngine;
+using UnityEngine.UI;
 
+namespace Entities.View.Scripts.Widgets
+{
 	public class OpenSettingsButton : ScreenWidget
 	{
 		[SerializeField] private Button m_Button;

@@ -1,13 +1,15 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
+using Entities.Core.Scripts;
+using Entities.Core.Scripts.GUI;
+using Entities.Minigame.Scripts;
+using Entities.View.Scripts.Widgets;
 using TMPro;
-using System;
-using Core;
-using GUI.Widgets;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace WheelOfFortune
+namespace Entities.Minigame.WheelOfFortune.Scripts
 {
 	
 	public class WheelGameScreen : MiniGameScreenView<WheelGameSettings, WheelGame, long, WheelWidget.WheelSegmentConfig>

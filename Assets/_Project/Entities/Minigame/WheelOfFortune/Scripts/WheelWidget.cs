@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Core;
-using Core.Utility;
 using Cysharp.Threading.Tasks;
+using Entities.Core.Scripts;
+using Entities.Core.Scripts.GUI;
+using Entities.Core.Scripts.Utility;
+using Entities.Minigame.Scripts;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace GUI.Widgets
+namespace Entities.Minigame.WheelOfFortune.Scripts
 {
     public class WheelWidget : ScreenWidget
     {

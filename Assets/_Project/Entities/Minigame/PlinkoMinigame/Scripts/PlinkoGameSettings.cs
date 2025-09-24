@@ -1,7 +1,8 @@
-﻿using Core;
+﻿using Entities.Core.Scripts.User;
+using Entities.Minigame.Scripts;
 using UnityEngine;
 
-namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
+namespace Entities.Minigame.PlinkoMinigame.Scripts
 {
 	[CreateAssetMenu(fileName = "PlinkoGameSettings", menuName = "Settings/Games/PlinkoGameSettings")]
     public class PlinkoGameSettings : MiniGameSettingsBase<PlinkoGameSettings, PlinkoGame, PlinkoGameScreen, long, PlinkoWidget.PlinkoBoxConfig>

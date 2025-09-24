@@ -1,11 +1,14 @@
-﻿namespace GUI.Widgets
-{
-	using System;
-	using Core;
-	using TMPro;
-	using UnityEngine;
-	using UnityEngine.UI;
+﻿using System;
+using Entities.Core.Scripts;
+using Entities.Core.Scripts.GUI;
+using Entities.Core.Scripts.User;
+using Entities.Minigame.Scripts;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
+namespace Entities.View.Scripts.Widgets
+{
 	public class BetAndPlayWidget : ScreenWidget
 	{
 		[SerializeField]

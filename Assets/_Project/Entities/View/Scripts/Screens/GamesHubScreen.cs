@@ -1,9 +1,12 @@
-namespace GUI
-{
-	using System.Collections.Generic;
-	using Core;
-	using UnityEngine;
+using System.Collections.Generic;
+using Entities.Core.Scripts;
+using Entities.Core.Scripts.GUI;
+using Entities.Core.Scripts.User;
+using Entities.Minigame.Scripts;
+using UnityEngine;
 
+namespace Entities.View.Scripts.Screens
+{
 	public class GamesHubScreen : ScreenView
 	{
 		public override bool CanBeClosed => false;

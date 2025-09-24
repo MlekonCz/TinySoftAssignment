@@ -1,8 +1,11 @@
-﻿namespace Core
-{
-	using Sirenix.OdinInspector;
-	using UnityEngine;
+﻿using Entities.Core.Scripts.GUI;
+using Entities.Core.Scripts.User;
+using Entities.Minigame.Scripts;
+using Sirenix.OdinInspector;
+using UnityEngine;
 
+namespace Entities.Core.Scripts
+{
 	[CreateAssetMenu(fileName = "MasterSettings", menuName = "Settings/Settings")]
 	[InlineEditor]
 	public class MasterSettings : ScriptableObject

@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using Core;
-using Core.Utility;
-using Core.Utils;
 using Cysharp.Threading.Tasks;
+using Entities.Core.Scripts;
+using Entities.Core.Scripts.GUI;
+using Entities.Core.Scripts.Utility;
+using Entities.Core.Scripts.Utils;
+using Entities.Minigame.Scripts;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
-namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
+namespace Entities.Minigame.PlinkoMinigame.Scripts
 {
     public class PlinkoWidget : ScreenWidget
     {

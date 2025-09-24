@@ -1,4 +1,4 @@
-namespace Core
+namespace Entities.Minigame.Scripts
 {
 	public interface IWinResult
 	{

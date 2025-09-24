@@ -1,9 +1,9 @@
-﻿namespace GUI.Widgets
-{
-	using TMPro;
-	using UnityEngine;
-	using UnityEngine.UI;
+﻿using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
+namespace Entities.Minigame.WheelOfFortune.Scripts
+{
 	public class WheelSegmentWidget : MonoBehaviour
 	{
 		[SerializeField] private Image m_SegmentBackground;

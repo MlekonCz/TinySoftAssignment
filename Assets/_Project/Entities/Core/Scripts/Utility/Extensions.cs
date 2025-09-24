@@ -1,10 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
-namespace Core.Utility
+namespace Entities.Core.Scripts.Utility
 {
-	using System.Collections.Generic;
-	using UnityEngine;
-
 	public static class Extensions
 	{
 		public static T SelectRandom<T>(this List<T> list, IRandom random = null)

@@ -1,7 +1,7 @@
-﻿namespace Core
-{
-	using UnityEngine;
+﻿using UnityEngine;
 
+namespace Entities.Core.Scripts.GUI
+{
 	[CreateAssetMenu(fileName = "ScreenSettings", menuName = "Settings/ScreenSettings")]
 	public class ScreenSettings : ScriptableObject
 	{

@@ -1,9 +1,8 @@
-﻿using Core;
-using Core.Utility;
-using GUI.Widgets;
-using WheelOfFortune;
+﻿using Entities.Core.Scripts.User;
+using Entities.Core.Scripts.Utility;
+using Entities.Minigame.Scripts;
 
-namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
+namespace Entities.Minigame.PlinkoMinigame.Scripts
 {
     public class PlinkoGame : MiniGameBase<PlinkoGameSettings, long, PlinkoWidget.PlinkoBoxConfig>
     {

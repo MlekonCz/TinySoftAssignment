@@ -1,12 +1,10 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
-namespace Core
+namespace Entities.Core.Scripts.GUI
 {
-	using System;
-	using System.Threading.Tasks;
-	using UnityEngine;
-
 	// ScreenView with custom data binding
 	public abstract class ScreenView<TData> : ScreenView
 	{

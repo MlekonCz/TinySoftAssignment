@@ -1,9 +1,12 @@
-﻿namespace Core
-{
-	using GUI.Widgets;
-	using Sirenix.OdinInspector;
-	using UnityEngine;
+﻿using System;
+using Entities.Core.Scripts.GUI;
+using Entities.Core.Scripts.User;
+using Entities.View.Scripts.Widgets;
+using Sirenix.OdinInspector;
+using UnityEngine;
 
+namespace Entities.Minigame.Scripts
+{
 	public abstract class MiniGameSettingsBase : ScriptableObject
 	{
 		public string GameName;
@@ -34,28 +37,46 @@
 		
 #region Simulation
 #if UNITY_EDITOR
+        private const string KEY = "test_data";
+		
 		[Button]
 		private void SimulateRounds(TBet bet, long startBalance = 10000, int playRoundsCount = 10000)
 		{
-			var userService = new UserService();
+			var userService = new UserService(new PlayerPrefsSaveRep(KEY));
 			var userData = userService.UserData; 
 			userData.SetBalance(startBalance);
 			
 			var game = CreateTypedGame(userService);
 			var gameCounter = 0;
-			for (int i = 0; i < playRoundsCount; i++)
+
+			long totalStake = 0;
+			long totalPayout = 0;
+			var prevBalance = userData.Balance;
+
+			for (var i = 0; i < playRoundsCount; i++)
 			{
-				if (game.TryToPlaceBet(bet) == false)
+				if (!game.TryToPlaceBet(bet))
 				{
-					Debug.Log($"Simulation ended early.");
+					Debug.Log("Simulation ended early.");
 					break;
 				}
-				
+
 				gameCounter++;
+
+				var afterBet = userData.Balance;
+				totalStake += Math.Max(0, prevBalance - afterBet);
+
+
 				var winResult = game.GenerateWinResult();
 				game.ProcessWinResult(bet, winResult);
+
+				var afterWin = userData.Balance;
+				totalPayout += Math.Max(0, afterWin - afterBet);
+				prevBalance = afterWin;
 			}
-			Debug.Log($"Played {gameCounter:N} games, balance progress {startBalance:N} => {userData.Balance:N}. RTP: {((float)userData.Balance / startBalance * 100):N}%");
+
+			var rtp = (double)(userData.Balance - startBalance + totalStake) / totalStake;
+			Debug.Log($"Played {gameCounter:N} games, balance progress {startBalance:N} => {userData.Balance:N}. RTP: {(rtp):N}%");
 		}
 #endif
 #endregion

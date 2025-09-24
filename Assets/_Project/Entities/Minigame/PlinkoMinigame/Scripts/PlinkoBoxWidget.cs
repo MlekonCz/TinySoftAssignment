@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
+namespace Entities.Minigame.PlinkoMinigame.Scripts
 {
     public class PlinkoBoxWidget : MonoBehaviour
     { 

@@ -1,8 +1,8 @@
-﻿namespace Core
-{
-	using System.Collections.Generic;
-	using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
+namespace Entities.Minigame.Scripts
+{
 	[CreateAssetMenu(fileName = "MiniGamesSettings", menuName = "Settings/GameListSettings")]
 	public class MiniGamesSettings : ScriptableObject
 	{

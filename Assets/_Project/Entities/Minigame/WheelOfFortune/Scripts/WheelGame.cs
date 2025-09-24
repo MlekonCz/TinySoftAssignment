@@ -1,9 +1,9 @@
-﻿namespace WheelOfFortune
-{
-	using Core;
-	using Core.Utility;
-	using GUI.Widgets;
+﻿using Entities.Core.Scripts.User;
+using Entities.Core.Scripts.Utility;
+using Entities.Minigame.Scripts;
 
+namespace Entities.Minigame.WheelOfFortune.Scripts
+{
 	public class WheelGame : MiniGameBase<WheelGameSettings, long, WheelWidget.WheelSegmentConfig>
 	{
 		public WheelGame(WheelGameSettings settings, UserService userService) : base(settings, userService)

@@ -1,11 +1,11 @@
-namespace GUI.Widgets
-{
-	using System;
-	using Core;
-	using TMPro;
-	using UnityEngine;
-	using UnityEngine.UI;
+using System;
+using Entities.Minigame.Scripts;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
+namespace Entities.View.Scripts.Widgets
+{
 	public class GameThumbnail : MonoBehaviour
 	{
 		[SerializeField] private TextMeshProUGUI m_NameText;

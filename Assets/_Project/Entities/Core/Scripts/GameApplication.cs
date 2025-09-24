@@ -1,10 +1,12 @@
-namespace Core
-{
-	using System.Collections.Generic;
-	using Sirenix.OdinInspector;
-	using UnityEngine;
-	using UnityEngine.Serialization;
+using System.Collections.Generic;
+using Entities.Core.Scripts.GUI;
+using Entities.Core.Scripts.User;
+using Sirenix.OdinInspector;
+using UnityEngine;
+using UnityEngine.Serialization;
 
+namespace Entities.Core.Scripts
+{
 	public class GameApplication : MonoBehaviour
 	{
 		[FormerlySerializedAs("m_Settings")]
@@ -18,6 +20,9 @@ namespace Core
 		[ShowInInspector, ListDrawerSettings(DefaultExpandedState = true)]
 		private List<object> m_DebugViews = new List<object>(); 
 		
+        private const string KEY = "user_save_data";
+		
+        
 		private void Awake()
 		{
 			Debug.Log("Starting application");
@@ -37,7 +42,7 @@ namespace Core
 
 		private void InitGame()
 		{
-			var userService = new UserService();
+			var userService = new UserService(new PlayerPrefsSaveRep(KEY));
 			
 			m_ServiceLocator = new ServiceLocator();
 			m_ServiceLocator.Register(m_MasterSettings);
@@ -50,6 +55,7 @@ namespace Core
 			m_DebugViews.Add(m_ServiceLocator);
 			
 			m_ScreenStack.OpenScreen(m_MasterSettings.ScreenSettings.StartScreen);
+			userService.UserData.AppStartCount++;
 		}
 	}
 }

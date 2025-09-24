@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
+namespace Entities.Minigame.PlinkoMinigame.Scripts
 {
     public class BallWidget : MonoBehaviour
     {

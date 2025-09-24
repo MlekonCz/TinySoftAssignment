@@ -1,9 +1,10 @@
-﻿namespace Core
-{
-	using System;
-	using UnityEngine;
-	using Utility;
+﻿using System;
+using Entities.Core.Scripts.User;
+using Entities.Core.Scripts.Utility;
+using UnityEngine;
 
+namespace Entities.Minigame.Scripts
+{
 	public abstract class MiniGameBase : IDisposable
 	{
 		protected UserData m_UserData;

@@ -1,4 +1,4 @@
-﻿namespace Core.Utility
+﻿namespace Entities.Core.Scripts.Utility
 {
     public interface IWeightRandomItem
     {

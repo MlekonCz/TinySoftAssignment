@@ -1,13 +1,14 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
+using Entities.Core.Scripts;
+using Entities.Core.Scripts.GUI;
+using Entities.Minigame.Scripts;
+using Entities.View.Scripts.Widgets;
 using TMPro;
-using System;
-using Core;
-using GUI.Widgets;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
-namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
+namespace Entities.Minigame.PlinkoMinigame.Scripts
 {
     public class PlinkoGameScreen : MiniGameScreenView<PlinkoGameSettings, PlinkoGame, long, PlinkoWidget.PlinkoBoxConfig>
     {

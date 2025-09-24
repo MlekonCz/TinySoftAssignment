@@ -1,9 +1,9 @@
-﻿namespace WheelOfFortune
-{
-	using Core;
-	using GUI.Widgets;
-	using UnityEngine;
+﻿using Entities.Core.Scripts.User;
+using Entities.Minigame.Scripts;
+using UnityEngine;
 
+namespace Entities.Minigame.WheelOfFortune.Scripts
+{
 	[CreateAssetMenu(fileName = "WheelGameSettings", menuName = "Settings/Games/WheelGameSettings")]
 	public class WheelGameSettings : MiniGameSettingsBase<WheelGameSettings, WheelGame, WheelGameScreen, long, WheelWidget.WheelSegmentConfig>
 	{

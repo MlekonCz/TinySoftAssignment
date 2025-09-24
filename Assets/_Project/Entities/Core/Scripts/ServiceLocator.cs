@@ -1,10 +1,9 @@
-﻿namespace Core
-{
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using Sirenix.OdinInspector;
+﻿using System;
+using System.Collections.Generic;
+using Sirenix.OdinInspector;
 
+namespace Entities.Core.Scripts
+{
 	public interface IInitializable
 	{
 		public void Initialize(ServiceLocator locator);

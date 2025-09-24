@@ -1,9 +1,11 @@
-﻿namespace GUI.Widgets
-{
-	using Core;
-	using TMPro;
-	using UnityEngine;
+﻿using Entities.Core.Scripts;
+using Entities.Core.Scripts.GUI;
+using Entities.Core.Scripts.User;
+using TMPro;
+using UnityEngine;
 
+namespace Entities.View.Scripts.Widgets
+{
 	public class UserBalanceWidget : ScreenWidget
 	{
 		[SerializeField] private TextMeshProUGUI m_BalanceText;
