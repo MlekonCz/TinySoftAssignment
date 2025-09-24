@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using Core;
 using Core.Utility;
+using Core.Utils;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -13,29 +13,6 @@ using Random = UnityEngine.Random;
 
 namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
 {
-
-    [Serializable]
-    public class AnimGroupEntry
-    {
-        [SerializeField]
-        private AnimationCurve m_DropOnTopXCurve;
-
-        [SerializeField]
-        private AnimationCurve m_DropOnTopYCurve;
-
-        [SerializeField]
-        private AnimationCurve m_DropToSideXCurve;
-
-        [SerializeField]
-        private AnimationCurve m_DropToSideYCurve;
-        
-        
-        public AnimationCurve DropOnTopXCurve => m_DropOnTopXCurve;
-        public AnimationCurve DropOnTopYCurve => m_DropOnTopYCurve;
-        public AnimationCurve DropToSideXCurve => m_DropToSideXCurve;
-        public AnimationCurve DropToSideYCurve => m_DropToSideYCurve;
-
-    }
     public class PlinkoWidget : ScreenWidget
     {
         [Serializable]
@@ -58,8 +35,27 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
             public List<PlinkoBoxConfig> Box = new();
         }
 
+        [BoxGroup("Ball")]
+        [SerializeField]
+        private Transform m_BallSpawningImage;
+        
+        [BoxGroup("Ball")]
+        [SerializeField]
+        private float m_BallAcceleration = 9.81f;
+        
+        [BoxGroup("Ball")]
+        [SerializeField]
+        private float m_MaxBounceAngle = 35;
+        
+        [BoxGroup("Ball")]
+        [SerializeField]
+        private float m_MinBounceAngle = 25;
 
-        [FormerlySerializedAs("_BallParent")]
+        [BoxGroup("Ball")]
+        [Range(0f, 1f)]
+        [SerializeField]
+        private float m_BallBouncePreservedMomentum = 0.5f;
+
         [BoxGroup("Ball")]
         [SerializeField]
         private Transform m_BallParent;
@@ -79,17 +75,7 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
 
         [BoxGroup("Ball")]
         [SerializeField]
-        private List<AnimGroupEntry> m_RightSideDropCurveGroupCurve = new();
-
-        [BoxGroup("Ball")]
-        [SerializeField]
-        private List<AnimGroupEntry> m_LeftSideDropCurveGroupCurve = new();
-
-        [FormerlySerializedAs("_AboveObstacleSpawn")]
-        [BoxGroup("Ball")]
-        [SerializeField]
-        private float m_AboveObstacleSpawn = 75f;
-
+        private float m_AboveObstacleSpawn = 1f;
 
         [BoxGroup("Box")]
         [SerializeField]
@@ -106,7 +92,7 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
         
         [BoxGroup("Obstacle")]
         [SerializeField]
-        private PlinkoObstacleWidget m_ObstaclePrefab;
+        private RectTransform m_ObstaclePrefab;
 
         [BoxGroup("Obstacle")]
         [SerializeField]
@@ -136,7 +122,7 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
         private float m_boxLayoutStartX;
         private float m_boxLayoutStepX;
 
-        private PlinkoObstacleWidget[,] m_ObstacleGrid;
+        private RectTransform[,] m_ObstacleGrid;
         private List<int> m_indexOrder = new();
 
         public List<PlinkoBoxWidget> BoxWidgets { get; } = new();
@@ -153,6 +139,7 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
         {
             SetUpBoxes(config);
             SetUpObstacles(config);
+            SetUpBallSpawningImage();
         }
 
         private void SetUpBoxes(PlinkoConfig config)
@@ -207,7 +194,7 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
             }
 
             var gridSize = config.Box.Count - 1;
-            m_ObstacleGrid = new PlinkoObstacleWidget[gridSize, gridSize];
+            m_ObstacleGrid = new RectTransform[gridSize, gridSize];
 
             m_indexOrder = new List<int>(gridSize);
             for (var i = 0; i < gridSize; i++) m_indexOrder.Add(i);
@@ -269,7 +256,6 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
 
                     var col = j;
                     m_ObstacleGrid[row, col] = obstacle;
-                    if (obstacle.Text) obstacle.Text.text = col.ToString();
 
                     var xLocal = baseX + desiredShift + j * gapStepX;
                     xLocal = Mathf.Clamp(xLocal, minGapX, maxGapX);
@@ -283,6 +269,14 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
                     rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, targetPegSize);
                 }
             }
+        }
+
+        private void SetUpBallSpawningImage()
+        {
+            var topObstacle =m_ObstacleGrid[0,FindValidObstacles(0).First()];
+            var ballSpawningPosition = topObstacle.position + Vector3.up * (m_AboveObstacleSpawn +  topObstacle.ToScreenSpaceRect().height / 2);
+            
+            m_BallSpawningImage.transform.position = ballSpawningPosition;
         }
 
         [Button]
@@ -348,73 +342,90 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
             }
 
             var topObstacle = m_ObstacleGrid[0, path[0]];
-            var startAbove = topObstacle.TopPoint.position + Vector3.up * m_AboveObstacleSpawn;
+            var startAbove = topObstacle.position + Vector3.up * (m_AboveObstacleSpawn +  topObstacle.ToScreenSpaceRect().height / 2);
 
             var ball = Instantiate(m_BallPrefab, m_BallParent);
             ball.gameObject.SetActive(true);
 
             var ballT = ball.transform;
-            ballT.localPosition = startAbove;
+            ballT.position = startAbove;
 
-            var animationSegmentCount = rows * 2 + 1; // +1 final drop into box
-            var segmentDuration = Mathf.Max(0.05f, m_RoundDuration / animationSegmentCount);
-
-            for (var row = 0; row < rows; row++)
-            {
-                var goRight = choices[row];
-
-                var animCurveGroups = goRight ? m_RightSideDropCurveGroupCurve : m_LeftSideDropCurveGroupCurve;
-                var curveGroup = animCurveGroups[Random.Range(0, animCurveGroups.Count)];
-                
-                ct.ThrowIfCancellationRequested();
-
-                var obstacle = m_ObstacleGrid[row, path[row]];
-                if (obstacle == null) break;
-
-                await AnimateDrop(ct, ballT, obstacle.TopPoint.position, segmentDuration  * (2 - m_DurationRationSideDropToTopDrop), curveGroup.DropOnTopXCurve,curveGroup.DropOnTopYCurve, ball, Ease.Linear);
-
-
-                var sidePoint = goRight ? obstacle.RightPoint.position : obstacle.LeftPoint.position;
-
-                
-                
-                await AnimateDrop(ct, ballT, sidePoint, segmentDuration * m_DurationRationSideDropToTopDrop, curveGroup.DropToSideXCurve, curveGroup.DropToSideYCurve, ball, Ease.Linear);
-            }
 
             var winningBox = BoxWidgets[targetBoxIndex];
-            var targetBoxPos = winningBox.transform.position;
-            await AnimateDrop(ct, ballT, targetBoxPos, segmentDuration * (2 - m_DurationRationSideDropToTopDrop), null,null, ball, Ease.Linear);
 
+
+            for (var i = 0; i < rows + 1; i++)
+            {
+                var initialXPos = ball.transform.position.x;
+
+                var goRight = choices[Mathf.Min(choices.Count-1, i)];
+                var targetPos = GetTargetObject(i, goRight);
+                
+                var timeToPeak = Mathf.Abs(-ball.YVelocity / m_BallAcceleration);
+                var peakY = ball.transform.position.y + ball.YVelocity * timeToPeak + 0.5f * m_BallAcceleration * timeToPeak * timeToPeak;
+              
+                var timeToReachY = Mathf.Sqrt((2 * (peakY - targetPos.y)) / m_BallAcceleration);
+
+                var totalTimeToReachTarget = timeToPeak + timeToReachY;
+                
+                var elapsedTime = 0f;
+                while (true)
+                {
+                    elapsedTime += Time.deltaTime;
+                    
+                    var pos = ball.transform.position;
+                    pos.y += ball.YVelocity * Time.deltaTime;
+                    
+                    ball.YVelocity -= m_BallAcceleration * Time.deltaTime;
+
+                    var t = Mathf.Clamp01(elapsedTime / totalTimeToReachTarget);
+                    pos.x = Mathf.Lerp(initialXPos, targetPos.x, t);
+
+                    ball.transform.position = pos;
+
+                    if (ball.transform.position.y <= targetPos.y)
+                    {
+                        ball.YVelocity *= -m_BallBouncePreservedMomentum;
+                        break;
+                    }
+
+                    await UniTask.Yield();
+                }
+            }
+            
             winningBox.PlayWinAnim();
             Destroy(ball);
-        }
-
-        private static async UniTask AnimateDrop(CancellationToken ct, Transform ballT, Vector3 position, float segmentDuration, AnimationCurve xAnimCurve, AnimationCurve yAnimCurve, BallWidget ball, Ease ease)
-        {
-            var tween = ballT.DOMove(position, segmentDuration).SetEase(ease);
-
-            tween.OnUpdate(() =>
+            return;
+            
+            
+            Vector2 GetTargetObject(int index, bool goRight)
             {
-                var p = tween.ElapsedPercentage();
-                var xOffset = xAnimCurve != null ? xAnimCurve.Evaluate(p) : 0f;
-                var yOffset = yAnimCurve != null ? yAnimCurve.Evaluate(p) : 0f;
-                ball.ApplyVisualBaseline(ballT.position, xOffset, yOffset);
-            });
+                if (index > path.Count - 1)
+                {
+                    return BoxWidgets[targetBoxIndex].transform.position;
 
-            await tween.AsyncWaitForCompletion()
-                .AsUniTask()
-                .AttachExternalCancellation(ct);
+                }
+                var obstacle = m_ObstacleGrid[index, path[index]];
+
+                var obstacleR = obstacle.ToScreenSpaceRect().height / 2;
+                var balR = ((RectTransform) ball.transform).ToScreenSpaceRect().width / 2;
+
+                var vec = (obstacleR + balR) * Vector3.up;
+                var sign = (goRight ? -1 : 1);
+                var rotatedVec = Quaternion.Euler(0, 0, Random.Range(m_MinBounceAngle , m_MaxBounceAngle) * sign) * vec;
+                return rotatedVec + obstacle.transform.position;
+            }
         }
 
-
-        private List<int> FindValidObstacles(int row, int currentObstacleCol = -1)
+        private List<int> FindValidObstacles(int row, int currentObstacleIndex = -1)
         {
             var result = new List<int>();
             var rows = m_ObstacleGrid.GetLength(0);
             var cols = m_ObstacleGrid.GetLength(1);
             if ((uint)row >= (uint)rows) return result;
 
-            if (currentObstacleCol < 0)
+            //when below 0, looks for first obstacle on top of pyramid
+            if (currentObstacleIndex < 0)
             {
                 var col0 = m_indexOrder != null && m_indexOrder.Count > 0 ? m_indexOrder[0] : -1;
                 if (col0 >= 0 && col0 < cols && m_ObstacleGrid[row, col0] != null)
@@ -432,15 +443,14 @@ namespace _Project.Entities.Minigame.PlinkoMinigame.Scripts
 
                 return result;
             }
+            
 
-            var k = currentObstacleCol;
+            if (currentObstacleIndex < cols && m_ObstacleGrid[row, currentObstacleIndex] != null)
+                result.Add(currentObstacleIndex);
 
-            if (k < cols && m_ObstacleGrid[row, k] != null)
-                result.Add(k);
-
-            var kp1 = k + 1;
-            if (kp1 >= 0 && kp1 < cols && m_ObstacleGrid[row, kp1] != null)
-                result.Add(kp1);
+            var nextObstacleIndex = currentObstacleIndex + 1;
+            if (nextObstacleIndex >= 0 && nextObstacleIndex < cols && m_ObstacleGrid[row, nextObstacleIndex] != null)
+                result.Add(nextObstacleIndex);
 
             if (result.Count > 1 && result[0] > result[1])
                 (result[0], result[1]) = (result[1], result[0]);

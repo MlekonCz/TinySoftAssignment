@@ -5124,7 +5124,6 @@ MonoBehaviour:
   m_WheelSpinners:
   - {fileID: 356200411467189126}
   - {fileID: 8052810838602064327}
-  m_WheelHead: {fileID: 356200411467189126}
   m_RotationsCurves:
   - serializedVersion: 2
     m_Curve:
@@ -5208,6 +5207,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  m_NumberOfRotations: 030000000400000005000000
+  m_RotationTransform: {fileID: 1647923843625624111}
+  m_WheelHead: {fileID: 356200411467189126}
   m_BumpCurve:
     serializedVersion: 2
     m_Curve:
@@ -5268,15 +5270,14 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_NumberOfRotations: 030000000400000005000000
   m_MaxFallDownAngleDeltaPerSecond: 220
-  m_ConfettiParticles: {fileID: 2259996739773589370}
+  _PctForBumpSound: 0.55
   m_SegmentPrefab: {fileID: 5136417045590870028, guid: bbf664c9ddf646449b37b1136602b190, type: 3}
   m_SegmentsParent: {fileID: 8052810838602064327}
-  m_RotationTransform: {fileID: 1647923843625624111}
   _stickPrefab: {fileID: 3473534890843570471, guid: 0ad022675fec4ea4bae5c0a39b1b40a1, type: 3}
   _sticksParent: {fileID: 1348483127224458005}
-  _PctForBumpSound: 0.55
+  m_ConfettiParticles:
+  - {fileID: 2259996739773589370}
 --- !u!114 &2981025706315831265
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5617,7 +5618,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 71.6
+  m_fontSize: 51.7
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1

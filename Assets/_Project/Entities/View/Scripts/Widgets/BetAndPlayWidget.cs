@@ -8,6 +8,9 @@
 
 	public class BetAndPlayWidget : ScreenWidget
 	{
+		[SerializeField]
+		private bool m_BlockButtonOnScreenBusy = true;
+		
 		[SerializeField] private TextMeshProUGUI m_BetText;
 		[SerializeField] private Button m_MinusButton;
 		[SerializeField] private Button m_PlusButton;
@@ -124,7 +127,7 @@
 		
 		private void HandleScreenBusyChanged(bool busy)
 		{
-			BlockButtons(busy);
+			if (m_BlockButtonOnScreenBusy) BlockButtons(busy);
 		}
 	}
 }

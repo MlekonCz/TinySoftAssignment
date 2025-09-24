@@ -39,6 +39,10 @@ namespace GUI.Widgets
 
         [BoxGroup("Spinning")]
         [SerializeField]
+        private Transform m_RotationTransform;
+
+        [BoxGroup("Spinning")]
+        [SerializeField]
         private Transform[] m_WheelSpinners;
         
         [BoxGroup("Spinning")]
@@ -48,11 +52,11 @@ namespace GUI.Widgets
         [BoxGroup("Spinning")]
         [SerializeField]
         private int[] m_NumberOfRotations = { 3, 4, 5 };
-
+        
         [BoxGroup("Spinning")]
         [SerializeField]
-        private Transform m_RotationTransform;
-
+        private List<ParticleSystem> m_ConfettiParticles = new();
+        
         [BoxGroup("Head")]
         [SerializeField]
         private Transform m_WheelHead;
@@ -86,8 +90,6 @@ namespace GUI.Widgets
         [SerializeField]
         private Transform _sticksParent;
       
-        [SerializeField]
-        private List<ParticleSystem> m_ConfettiParticles = new();
 
         private float m_ArcAngle;
         private float m_OneSegmentHalfAngle;
