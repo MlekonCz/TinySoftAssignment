@@ -10,6 +10,7 @@ namespace Entities.Minigame.Scripts
 	public abstract class MiniGameSettingsBase : ScriptableObject
 	{
 		public string GameName;
+		public string UniqueId;
 		public GameThumbnail GameThumbnail;
 
 		public abstract ScreenView CreateAndOpenGameView(UserService userService, ScreenStack screenStack);

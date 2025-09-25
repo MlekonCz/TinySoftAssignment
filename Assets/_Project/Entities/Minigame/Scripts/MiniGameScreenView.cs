@@ -14,6 +14,7 @@ namespace Entities.Minigame.Scripts
 		protected UserData m_UserData;
 		private CancellationTokenSource m_cancellationTokenSource = new();
 
+		
 		internal override void Initialize(ScreenStack stack, ServiceLocator locator)
 		{
 			base.Initialize(stack, locator);
@@ -73,6 +74,14 @@ namespace Entities.Minigame.Scripts
 			SetScreenBusy(true);
 
 			var winResult = m_Game.GenerateWinResult();
+
+			if (winResult is IWinResult result)
+			{
+				var id = m_Game.Settings.UniqueId;
+				m_UserData.SetResult(id, result.WinPercent);
+				if (result.WinPercent > 0) m_UserData.IncrementWinsPerGame(id);
+				else m_UserData.IncrementLosesPerGame(id);
+			}
 			
 			await AnimateGameRound(winResult, cancellationToken);
 			

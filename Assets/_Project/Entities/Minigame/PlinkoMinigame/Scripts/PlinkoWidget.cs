@@ -35,6 +35,9 @@ namespace Entities.Minigame.PlinkoMinigame.Scripts
             [TableList]
             public List<PlinkoBoxConfig> Box = new();
         }
+        [BoxGroup("Ball")]
+        [SerializeField]
+        private float m_GameSpeedMultiplier = 1f;
 
         [BoxGroup("Ball")]
         [SerializeField]
@@ -63,12 +66,12 @@ namespace Entities.Minigame.PlinkoMinigame.Scripts
 
         [BoxGroup("Ball")]
         [SerializeField]
-        private BallWidget m_BallPrefab;
+        private Ball m_BallPrefab;
 
         [BoxGroup("Ball")]
         [SerializeField]
         private float m_RoundDuration = 5f;
-
+      
         [BoxGroup("Ball")]
         [Range(0f, 2f)]
         [SerializeField]
@@ -80,7 +83,7 @@ namespace Entities.Minigame.PlinkoMinigame.Scripts
 
         [BoxGroup("Box")]
         [SerializeField]
-        private PlinkoBoxWidget m_BoxPrefab;
+        private PlinkoBox m_BoxPrefab;
 
         [BoxGroup("Box")]
         [SerializeField]
@@ -126,7 +129,7 @@ namespace Entities.Minigame.PlinkoMinigame.Scripts
         private RectTransform[,] m_ObstacleGrid;
         private List<int> m_indexOrder = new();
 
-        public List<PlinkoBoxWidget> BoxWidgets { get; } = new();
+        public List<PlinkoBox> BoxWidgets { get; } = new();
 
         public override void Initialize(ScreenStack stack, ScreenView owner, ServiceLocator locator)
         {
@@ -346,12 +349,12 @@ namespace Entities.Minigame.PlinkoMinigame.Scripts
                     var elapsedTime = 0f;
                     while (!cancellationToken.IsCancellationRequested)
                     {
-                        elapsedTime += Time.deltaTime;
+                        elapsedTime += Time.deltaTime * m_GameSpeedMultiplier;
                     
                         var pos = ball.transform.position;
-                        pos.y += ball.YVelocity * Time.deltaTime;
+                        pos.y += ball.YVelocity * Time.deltaTime * m_GameSpeedMultiplier;
                     
-                        ball.YVelocity -= m_BallAcceleration * Time.deltaTime;
+                        ball.YVelocity -= m_BallAcceleration * Time.deltaTime * m_GameSpeedMultiplier;
 
                         var t = Mathf.Clamp01(elapsedTime / totalTimeToReachTarget);
                         pos.x = Mathf.Lerp(initialXPos, targetPos.x, t);

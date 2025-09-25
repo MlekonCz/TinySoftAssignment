@@ -35,7 +35,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -328}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1379806500902386537
@@ -100,7 +100,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9211986933850610351}
   - component: {fileID: 8636618375693528000}
-  - component: {fileID: 5136417045590870028}
+  - component: {fileID: 5684362335588299210}
   m_Layer: 5
   m_Name: LuckyWheelSegmentStick
   m_TagString: Untagged
@@ -136,7 +136,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3473534890843570471}
   m_CullTransparentMesh: 1
---- !u!114 &5136417045590870028
+--- !u!114 &5684362335588299210
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -145,9 +145,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3473534890843570471}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5985bc72d1924d7d89bb11a473a5e3bb, type: 3}
+  m_Script: {fileID: 11500000, guid: b6f0f02d5e0f4861bad0c7fdfdc3fcd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SegmentBackground: {fileID: 0}
-  m_Text: {fileID: 0}
-  m_Image: {fileID: 603533065319336588}
+  m_Visual: {fileID: 4443195299934466315}

@@ -11,12 +11,12 @@ namespace Entities.Core.Scripts.User
 
         private bool m_Pending;
         private float m_Timer;
-        private const float DebounceWindow = 0.8f;
+        private const float SAVE_DELAY = 0.8f;
 
         private float m_PlaytimeAccum; 
 
         private float m_AutoSaveTimer;
-        private const float AutoSaveInterval = 15f;
+        private const float AUTO_SAVE_INTERVAL = 15f;
 
         public UserService(ISaveRepository repo)
         {
@@ -45,7 +45,7 @@ namespace Entities.Core.Scripts.User
         void IUpdatable.Update(float deltaTime)
         {
             m_PlaytimeAccum += deltaTime;
-            var wholeSeconds = (long)m_PlaytimeAccum; // floor
+            var wholeSeconds = (long)m_PlaytimeAccum;
             if (wholeSeconds > 0)
             {
                 UserData.TimeInGame += wholeSeconds;
@@ -53,11 +53,10 @@ namespace Entities.Core.Scripts.User
             }
             
             m_AutoSaveTimer += deltaTime;
-            if (m_AutoSaveTimer >= AutoSaveInterval)
+            if (m_AutoSaveTimer >= AUTO_SAVE_INTERVAL)
             {
                 m_AutoSaveTimer = 0f;
-                m_Pending = true;
-                m_Timer = 0f;
+                SaveNow();
             }
             
             if (UserData.Dirty)
@@ -69,13 +68,12 @@ namespace Entities.Core.Scripts.User
             if (!m_Pending) return;
 
             m_Timer += deltaTime;
-            if (m_Timer >= DebounceWindow)
+            if (m_Pending && UserData.Dirty && m_Timer >= SAVE_DELAY)
                 SaveNow();
         }
 
         public void ResetUser()
         {
-            // smaž uložená data a nastav defaulty
             m_Repo.Delete();
             UserData.ResetData();
             SetStartingUserData();
@@ -96,9 +94,6 @@ namespace Entities.Core.Scripts.User
 
         private void SaveNow()
         {
-            if (!m_Pending && !UserData.Dirty)
-                return;
-
             m_Pending = false;
             m_Timer = 0f;
 

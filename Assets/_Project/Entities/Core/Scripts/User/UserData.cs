@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Entities.Core.Scripts.Utility;
 using Entities.Core.Scripts.Utils;
 using Sirenix.OdinInspector;
@@ -13,13 +14,11 @@ namespace Entities.Core.Scripts.User
 		private long m_Balance;
 		private int m_BetIndex;
 		
-		// Public properties (getters)
 		[ShowInInspector, ReadOnly]  public long Balance => m_Balance;
 		[ShowInInspector, ReadOnly]  public int BetIndex => m_BetIndex;
 
 		public bool Dirty { get; private set; }
 		
-		// Signals
 		public Action SignalBalanceChanged { get; set; }
 		public Action SignalBetIndexChanged { get; set; }
 		
@@ -68,8 +67,6 @@ namespace Entities.Core.Scripts.User
 			SetDirty(false);
 		}
 		
-		
-		// private methods
 		private void AfterBalanceChanged()
 		{
 			if (m_Balance < 0)
@@ -103,22 +100,47 @@ namespace Entities.Core.Scripts.User
 		}
 		
 		private SaveDictionary<string, List<float>> m_RecentResultsPerGame;
-		private SaveDictionary<string, float> m_WinsPerGame;
-		private SaveDictionary<string, float> m_LosesPerGame;
+		private SaveDictionary<string, int> m_WinsPerGame;
+		private SaveDictionary<string, int> m_LosesPerGame;
 
 		private const int MAX_SIZE_OF_RESULT_HISTORY_PER_GAME = 100;
 		
 		public List<float> GetResultsPerGame(string id) => m_RecentResultsPerGame.GetOrDefault(id, new List<float>());
-		public float GetWinsPerGame(string id) => m_WinsPerGame.GetOrDefault(id, 0f);
-		public float GetLosesPerGame(string id) => m_LosesPerGame.GetOrDefault(id, 0f);
+		
+		public int GetWinsPerGame(string id) => m_WinsPerGame.GetOrDefault(id, 0);
+		public int GetLosesPerGame(string id) => m_LosesPerGame.GetOrDefault(id, 0);
+		
+		public void IncrementWinsPerGame(string id)
+		{
+			var list = m_WinsPerGame.Entries;
+			foreach (var t in list.Where(t => t.Key == id))
+			{
+				t.Value++; 
+				SetDirty(); 
+				return;
+			}
+
+			list.Add(new SaveEntry<string,int>{ Key = id, Value = 1 });
+			SetDirty();
+		}
+		
+		public void IncrementLosesPerGame(string id)
+		{
+			var list = m_LosesPerGame.Entries;
+			foreach (var t in list.Where(t => t.Key == id))
+			{
+				t.Value++; 
+				SetDirty(); 
+				return;
+			}
+
+			list.Add(new SaveEntry<string,int>{ Key = id, Value = 1 });
+			SetDirty();
+		}
 
 		public void SetResult(string gameId, float value)
 		{
 			if (string.IsNullOrEmpty(gameId)) return;
-
-			if (value > 0) m_WinsPerGame.Set(gameId, value);
-			else m_LosesPerGame.Set(gameId, value);
-
 			m_RecentResultsPerGame.PushCapped(gameId, value, MAX_SIZE_OF_RESULT_HISTORY_PER_GAME);
 			SetDirty();
 		}
@@ -129,13 +151,13 @@ namespace Entities.Core.Scripts.User
 			set => m_RecentResultsPerGame = value ?? new();
 		}
 
-		public SaveDictionary<string, float> WinsSave
+		public SaveDictionary<string, int> WinsSave
 		{
 			get => m_WinsPerGame;
 			set => m_WinsPerGame = value ?? new();
 		}
 
-		public SaveDictionary<string, float> LosesSave
+		public SaveDictionary<string, int> LosesSave
 		{
 			get => m_LosesPerGame;
 			set => m_LosesPerGame = value ?? new();
@@ -150,6 +172,11 @@ namespace Entities.Core.Scripts.User
 		{
 			m_Balance = 0;
 			m_BetIndex = 0;
+			m_TimeInGame = 0;
+			m_AppStartCount = 1;
+			m_RecentResultsPerGame.Entries.Clear();
+			m_WinsPerGame.Entries.Clear();
+			m_LosesPerGame.Entries.Clear();
 			SetDirty();
 		}
 	}

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace Entities.Minigame.PlinkoMinigame.Scripts
 {
-    public class PlinkoBoxWidget : MonoBehaviour
+    public class PlinkoBox : MonoBehaviour
     { 
         [SerializeField]
         private ParticleSystem[] m_ConfettiParticles;

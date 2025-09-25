@@ -6,6 +6,7 @@ using Cysharp.Threading.Tasks;
 using Entities.Core.Scripts;
 using Entities.Core.Scripts.GUI;
 using Entities.Core.Scripts.Utility;
+using Entities.Core.Scripts.Utils;
 using Entities.Minigame.Scripts;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -82,11 +83,11 @@ namespace Entities.Minigame.WheelOfFortune.Scripts
 
         [BoxGroup("Segments")]
         [SerializeField]
-        private Transform m_SegmentsParent;
+        private RectTransform m_SegmentsParent;
        
         [BoxGroup("Segments")]
         [SerializeField]
-        private GameObject _stickPrefab;
+        private LuckyWheelStick _stickPrefab;
 
         [BoxGroup("Segments")]
         [SerializeField]
@@ -125,7 +126,7 @@ namespace Entities.Minigame.WheelOfFortune.Scripts
 				}
 			}
 			WheelSegments.Clear();
-
+			float radius = m_SegmentsParent.rect.height * 0.5f;
 			// Setup new config
 			m_ArcAngle = 360f / config.Segments.Count;
 			for (int i = 0; i < config.Segments.Count; i++)
@@ -138,11 +139,15 @@ namespace Entities.Minigame.WheelOfFortune.Scripts
 				
 				if (_stickPrefab != null && _sticksParent != null)
 				{
-					var stickInstace = Instantiate(_stickPrefab, _sticksParent);
-					stickInstace.transform.localRotation = segment.transform.localRotation;
+					var stickInstance = Instantiate(_stickPrefab, _sticksParent);
+					stickInstance.Visual.transform.localPosition = new Vector3(0f, radius, 0f);
+					stickInstance.transform.localRotation = segment.transform.localRotation;
+					
+					var edgeAngle = i * m_ArcAngle;
+					stickInstance.transform.localRotation = Quaternion.Euler(0f, 0f, edgeAngle);
 				}
 			}
-			
+			_sticksParent.transform.localRotation = Quaternion.Euler(0f, 0f, m_ArcAngle / 2);
 		}
 
 		[Button]

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: WheelGameSettings_DoubleOrNothig
   m_EditorClassIdentifier: 
   GameName: Double or Nothing
+  UniqueId: LuckyWheel2
   GameThumbnail: {fileID: 1150520300843018233, guid: 79cbb05b01283d84690888c225e90cb5, type: 3}
   GameScreenPrefab: {fileID: 6090224208104472588, guid: 6411deb817baff8428cdbbe98a5f4de2, type: 3}
   WheelConfig:
@@ -21,7 +22,9 @@ MonoBehaviour:
       Color: {r: 0.006026864, g: 1, b: 0, a: 1}
       Sprite: {fileID: 0}
       Text: 
+      RandomWeight: 1
     - WinPercent: 0
       Color: {r: 1, g: 0.07366451, b: 0, a: 1}
       Sprite: {fileID: 0}
       Text: 
+      RandomWeight: 1

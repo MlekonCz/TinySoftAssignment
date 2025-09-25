@@ -2,7 +2,7 @@
 
 namespace Entities.Minigame.PlinkoMinigame.Scripts
 {
-    public class BallWidget : MonoBehaviour
+    public class Ball : MonoBehaviour
     {
         public float YVelocity { get; set; }
     }

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: WheelGameSettings_5Way
   m_EditorClassIdentifier: 
   GameName: 5 Way Wheel
+  UniqueId: LuckyWheel5
   GameThumbnail: {fileID: 1150520300843018233, guid: 79cbb05b01283d84690888c225e90cb5, type: 3}
   GameScreenPrefab: {fileID: 6090224208104472588, guid: 6411deb817baff8428cdbbe98a5f4de2, type: 3}
   WheelConfig:

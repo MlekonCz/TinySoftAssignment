@@ -14,7 +14,7 @@ namespace Entities.Core.Scripts.User
         public int BetIndex;
 
         public SaveDictionary<string, List<float>> recentResultsPerGame = new();
-        public SaveDictionary<string, float> winsPerGame = new();
-        public SaveDictionary<string, float> losesPerGame = new();
+        public SaveDictionary<string, int> winsPerGame = new();
+        public SaveDictionary<string, int> losesPerGame = new();
     }
 }

@@ -29,8 +29,8 @@ namespace Entities.Core.Scripts.User
             userData.TimeInGame = saveData.TimeInGame;
 
             userData.RecentResultsSave = saveData.recentResultsPerGame ?? new SaveDictionary<string, List<float>>();
-            userData.WinsSave = saveData.winsPerGame ?? new SaveDictionary<string, float>();
-            userData.LosesSave = saveData.losesPerGame ?? new SaveDictionary<string, float>();
+            userData.WinsSave = saveData.winsPerGame ?? new SaveDictionary<string, int>();
+            userData.LosesSave = saveData.losesPerGame ?? new SaveDictionary<string, int>();
 
             userData.ClearDirty();
         }
