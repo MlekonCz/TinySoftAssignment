@@ -176,6 +176,7 @@ namespace Entities.Minigame.PlinkoMinigame.Scripts
                 box.gameObject.SetActive(true);
 
                 ((RectTransform)box.transform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, boxWidth);
+                ((RectTransform)box.transform).SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, m_BoxParent.rect.height);
 
                 var x = m_boxLayoutStartX + i * m_boxLayoutStepX;
                 box.transform.localPosition = new Vector3(x, 0f, 0f);
